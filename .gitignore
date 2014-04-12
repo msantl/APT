@@ -1,2 +1,10 @@
+# Python byte code files
 *.pyc
+
+# Vim swap files
 *.swp
+
+# LaTeX auxilary files
+*.aux
+*.log
+*.gz
