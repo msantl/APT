@@ -1,4 +1,5 @@
-APT
+Text Analysis and Retrieval - project repository
 ===
 
-Text Analysis and Retrieval - project repository
+Predictive Typing system
+---
