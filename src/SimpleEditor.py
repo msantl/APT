@@ -17,17 +17,18 @@ class Quitter(Frame):
             Frame.quit(self)
 
 class ScrolledText(Frame):
-    def __init__(self, parent=None, text='', file=None):
+    def __init__(self, parent=None, text='', disabled=False, file=None):
         Frame.__init__(self, parent)
-        self.pack(expand=YES, fill=BOTH)
         self.makewidgets()
+        if disabled:
+            self.text.config(state=DISABLED)
         self.settext(text, file)
 
     def makewidgets(self):
         sbar = Scrollbar(self)
         text = Text(self, relief=SUNKEN)
         sbar.config(command=text.yview)
-        text.config(yscrollcommand=sbar.set)
+        text.config(yscrollcommand=sbar.set, font=('monospace', 12, 'normal'))
         sbar.pack(side=RIGHT, fill=Y)
         text.pack(side=LEFT, expand=YES, fill=BOTH)
         self.text = text
@@ -38,28 +39,48 @@ class ScrolledText(Frame):
         self.text.delete('1.0', END)
         self.text.insert('1.0', text)
         self.text.mark_set(INSERT, '1.0')
-        self.text.focus()
 
     def gettext(self):
         return self.text.get('1.0', END+'-1c')
 
-class SimpleEditor(ScrolledText):
+class SimpleEditor(Frame):
     def __init__(self, parent=None, file=None):
+        Frame.__init__(self, parent)
+
+        # frame for save and quit buttons
         frm = Frame(parent)
         frm.pack(fill=X)
+        # save button
         Button(frm, text='Save',  command=self.onSave).pack(side=LEFT)
+        # quit button
         Quitter(frm).pack(side=LEFT)
-        ScrolledText.__init__(self, parent, file=file)
-        self.text.config(font=('monospace', 12, 'normal'))
+        # input textbox
+        self.inputText = ScrolledText(parent, file=file)
+        self.inputText.pack(expand=YES, fill=BOTH)
+        # separator
+        Frame(height=2, bd=1, relief=SUNKEN).pack(fill=X, padx=5, pady=5)
+        # control textbox
+        self.outputText = ScrolledText(parent, disabled=True)
+        self.outputText.pack(expand=YES, fill=BOTH)
+        # set inputText and outputText size
+        self.inputText.text.config(height=20)
+        self.outputText.text.config(height=10)
+        # set focus on inputText
+        self.inputText.text.focus()
 
     def onSave(self):
         filename = asksaveasfilename()
         if filename:
-            alltext = self.gettext()
+            alltext = self.inputText.gettext()
             open(filename, 'w').write(alltext)
 
 if __name__ == '__main__':
     try:
-        SimpleEditor(file=sys.argv[1]).mainloop()
+        master = Tk()
+        master.wm_title("Predictive Typing System")
+
+        editor = SimpleEditor(parent=master, file=sys.argv[1])
+        editor.mainloop()
     except IndexError:
         SimpleEditor().mainloop()
+
