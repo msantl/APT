@@ -1,8 +1,11 @@
 from Tkinter import *
 from tkSimpleDialog import askstring
 from tkFileDialog   import asksaveasfilename
+from tkFileDialog   import askopenfile
 
 from tkMessageBox import askokcancel
+
+from witten_bell import witten_bell
 
 class Quitter(Frame):
     def __init__(self, parent=None):
@@ -52,6 +55,8 @@ class SimpleEditor(Frame):
         frm.pack(fill=X)
         # save button
         Button(frm, text='Save',  command=self.onSave).pack(side=LEFT)
+        # Load button
+        Button(frm, text='Load',  command=self.onLoad).pack(side=LEFT)
         # quit button
         Quitter(frm).pack(side=LEFT)
         # input textbox
@@ -69,11 +74,15 @@ class SimpleEditor(Frame):
         self.inputText.text.focus()
 
     def onSave(self):
-        filename = asksaveasfilename()
-        if filename:
-            alltext = self.inputText.gettext()
-            open(filename, 'w').write(alltext)
+		filename = asksaveasfilename()
+		if filename:
+			alltext = self.inputText.gettext()
+			open(filename, 'w').write(alltext)
 
+    def onLoad(self):
+		self.filename = askopenfile()
+
+		
 if __name__ == '__main__':
     try:
         master = Tk()
