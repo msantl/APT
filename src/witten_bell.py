@@ -25,7 +25,7 @@ def n_plus_counter(sequence, inputFile):
 	result = list(set(result))
 	return len(result)
 
-def witten_bell(n, total_number_of_words, test_sequence, next_word):
+def witten_bell(inputFile, n, total_number_of_words, test_sequence, next_word):
 	whole_sequence = list(test_sequence)
 	whole_sequence.append(next_word)
 	whole_sequence = tuple(whole_sequence) 
@@ -50,32 +50,36 @@ def witten_bell(n, total_number_of_words, test_sequence, next_word):
 	
 	if len(test_sequence) == 1:
 		uni_words = count_n_grams(1, inputFile)
+		if c_down+n_plus == 0:
+			return 0
 		p = (c_up + n_plus * uni_words[(next_word, )] / total_number_of_words) / (c_down + n_plus)
 		return p
 		
-	p = (c_up + n_plus * witten_bell(n-1, total_number_of_words, test_sequence, next_word)) / (c_down + n_plus)
+	p = (c_up + n_plus * witten_bell(inputFile, n-1, total_number_of_words, test_sequence, next_word)) / (c_down + n_plus)
 	
 	return p
-	
-#n = 3
-#test_sequence = ('Administration', 'of')
 
-#unique_words = count_n_grams(1, inputFile)
 
-#total_number_of_words = 0
-#for key in unique_words:
-	#total_number_of_words += unique_words[key]
+def get_next_word_witten_bell(inputFile, sequence):
+	n = 3
+	test_sequence = sequence
 
-#probabilities = []
-#for word, number in unique_words.iteritems():
-	#prob = witten_bell(3, total_number_of_words, test_sequence, word[0])
-	#probabilities.append((word[0], prob))
+	unique_words = count_n_grams(1, inputFile)
 
-#max_prob = probabilities[0][1]
-#predicted_word = probabilities[0][0]
-#for i in probabilities:
-	#if i[1] > max_prob:
-		#max_prob = i[1]
-		#predicted_word = i[0]
-	
-#print "Predicted word: " + predicted_word
+	total_number_of_words = 0
+	for key in unique_words:
+		total_number_of_words += unique_words[key]
+
+	probabilities = []
+	for word, number in unique_words.iteritems():
+		prob = witten_bell(inputFile, 3, total_number_of_words, test_sequence, word[0])
+		probabilities.append((word[0], prob))
+
+	max_prob = probabilities[0][1]
+	predicted_word = probabilities[0][0]
+	for i in probabilities:
+		if i[1] > max_prob:
+			max_prob = i[1]
+			predicted_word = i[0]
+		
+	return predicted_word

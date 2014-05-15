@@ -5,7 +5,7 @@ from tkFileDialog   import askopenfile
 
 from tkMessageBox import askokcancel
 
-from witten_bell import witten_bell
+from witten_bell import get_next_word_witten_bell
 
 class Quitter(Frame):
     def __init__(self, parent=None):
@@ -47,49 +47,60 @@ class ScrolledText(Frame):
         return self.text.get('1.0', END+'-1c')
 
 class SimpleEditor(Frame):
-    def __init__(self, parent=None, file=None):
-        Frame.__init__(self, parent)
+	def __init__(self, parent=None, file=None):
+		Frame.__init__(self, parent)
 
-        # frame for save and quit buttons
-        frm = Frame(parent)
-        frm.pack(fill=X)
-        # save button
-        Button(frm, text='Save',  command=self.onSave).pack(side=LEFT)
-        # Load button
-        Button(frm, text='Load',  command=self.onLoad).pack(side=LEFT)
-        # quit button
-        Quitter(frm).pack(side=LEFT)
-        # input textbox
-        self.inputText = ScrolledText(parent, file=file)
-        self.inputText.pack(expand=YES, fill=BOTH)
-        # separator
-        Frame(height=2, bd=1, relief=SUNKEN).pack(fill=X, padx=5, pady=5)
-        # control textbox
-        self.outputText = ScrolledText(parent, disabled=True)
-        self.outputText.pack(expand=YES, fill=BOTH)
-        # set inputText and outputText size
-        self.inputText.text.config(height=20)
-        self.outputText.text.config(height=10)
-        # set focus on inputText
-        self.inputText.text.focus()
+		# frame for save and quit buttons
+		frm = Frame(parent)
+		frm.pack(fill=X)
+		# save button
+		Button(frm, text='Save',  command=self.onSave).pack(side=LEFT)
+		# Load button
+		Button(frm, text='Load',  command=self.onLoad).pack(side=LEFT)
+		# quit button
+		Quitter(frm).pack(side=LEFT)
+		# input textbox
+		self.inputText = ScrolledText(parent, file=file)
+		self.inputText.pack(expand=YES, fill=BOTH)
+		# separator
+		Frame(height=2, bd=1, relief=SUNKEN).pack(fill=X, padx=5, pady=5)
+		# control textbox
+		self.outputText = ScrolledText(parent, disabled=True)
+		self.outputText.pack(expand=YES, fill=BOTH)
+		# set inputText and outputText size
+		self.inputText.text.config(height=20)
+		self.outputText.text.config(height=8)
+		# set focus on inputText
+		self.inputText.text.focus()
+		
+		frm.bind("<Button-1>", self.predictNextWord)
 
-    def onSave(self):
+	def onSave(self):
+		#print self.inputText.gettext()
+		self.inputText.settext(self.inputText.gettext() + 'a')
 		filename = asksaveasfilename()
 		if filename:
 			alltext = self.inputText.gettext()
 			open(filename, 'w').write(alltext)
 
-    def onLoad(self):
+	def onLoad(self):
 		self.filename = askopenfile()
+		
+	def predictNextWord(self, event):
+		text = self.inputText.gettext()
+		text = text.split()
+		sequence = (str(text[-2]), str(text[-1]))
+		#print sequence
+		print get_next_word_witten_bell(self.filename, sequence)
 
 		
 if __name__ == '__main__':
-    try:
-        master = Tk()
-        master.wm_title("Predictive Typing System")
+	try:
+		master = Tk()
+		master.wm_title("Predictive Typing System")
 
-        editor = SimpleEditor(parent=master, file=sys.argv[1])
-        editor.mainloop()
-    except IndexError:
-        SimpleEditor().mainloop()
+		editor = SimpleEditor(parent=master, file=sys.argv[1])
+		editor.mainloop()
+	except IndexError:
+		SimpleEditor().mainloop()
 
