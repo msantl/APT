@@ -1,5 +1,16 @@
 #!usr/bin/python
 
+# Removes punctations
+# All words converts to lowercase
+def strip_words(words):
+	new_words = []
+	for word in words:
+		word = word.rstrip('?:!.,;')
+		word = word.lower()
+		new_words.append(word)
+		
+	return new_words
+
 # n - n-gram
 # inputFile - file iz kojeg cita 
 # npr: za n=1 prebroji koliko puta se koja rijec pojavljuje
@@ -12,6 +23,7 @@ def count_n_grams(n, inputFile):
 	for line in inputFile:
 		line = line.strip()
 		words = line.split()
+		words = strip_words(words)
 		for i in range (0, len(words) - n + 1):
 			ngram_list = []
 			for j in range(0, n):
@@ -24,4 +36,3 @@ def count_n_grams(n, inputFile):
 	
 	inputFile.seek(0)
 	return ngrams
-	
