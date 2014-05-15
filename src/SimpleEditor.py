@@ -23,8 +23,8 @@ class ScrolledText(Frame):
     def __init__(self, parent=None, text='', disabled=False, file=None):
         Frame.__init__(self, parent)
         self.makewidgets()
-        if disabled:
-            self.text.config(state=DISABLED)
+        #if disabled:
+        #    self.text.config(state=DISABLED)
         self.settext(text, file)
 
     def makewidgets(self):
@@ -73,11 +73,10 @@ class SimpleEditor(Frame):
 		# set focus on inputText
 		self.inputText.text.focus()
 		
+		# TODO bindati na space i na inputText
 		frm.bind("<Button-1>", self.predictNextWord)
 
 	def onSave(self):
-		#print self.inputText.gettext()
-		self.inputText.settext(self.inputText.gettext() + 'a')
 		filename = asksaveasfilename()
 		if filename:
 			alltext = self.inputText.gettext()
@@ -90,8 +89,8 @@ class SimpleEditor(Frame):
 		text = self.inputText.gettext()
 		text = text.split()
 		sequence = (str(text[-2]), str(text[-1]))
-		#print sequence
-		print get_next_word_witten_bell(self.filename, sequence)
+		self.outputText.settext(get_next_word_witten_bell(self.filename, sequence))
+		#print get_next_word_witten_bell(self.filename, sequence)
 
 		
 if __name__ == '__main__':
