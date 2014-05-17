@@ -87,12 +87,8 @@ class SimpleEditor(Frame):
 
     def onLoad(self):
         self.filename = askopenfile()
-        wb = Witten_Bell()
-        wb.train(self.filename, 3)
-        wb.get_next_word(('Administration', 'of'))
-        #cor = Corpus()
-        #cor.train(self.filename, 3)
-        #cor.get_next_word(('Administration', 'of'))
+        self.wb = Witten_Bell()
+        self.wb.train(self.filename, 3)
 
     def predictNextWord(self, event):
         text = self.inputText.gettext()
@@ -102,7 +98,7 @@ class SimpleEditor(Frame):
             return
 
         sequence = (str(text[-2]), str(text[-1]))
-        self.outputText.settext(get_next_word_witten_bell(self.filename, sequence))
+        self.outputText.settext(self.wb.get_next_word(sequence))
 
 if __name__ == '__main__':
     try:

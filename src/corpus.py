@@ -3,13 +3,9 @@ import abc
 
 class Corpus:
 	def __init__(self):
-		# self.max_n
-		# self.n_gram_map = {}
 		self.n_gram_counts = {}
-		self.n_gram_after_word_count = {} # genious name xD # how many different words can be find after ngram
-		# self.corpus
+		self.n_gram_after_word_count = {} # genious name xD # how many different words can be found after ngram
 		self.unique_words = []
-		# self.number_of_unique_words
 		self.total_number_of_words = 0
 		
 	def get_ngrams_counts(self):
@@ -37,8 +33,7 @@ class Corpus:
 				max_prob = i[1]
 				predicted_word = i[0]
 		
-		print predicted_word	
-		#return predicted_word
+		return predicted_word
 	
 	@abc.abstractmethod
 	def get_word_probability(self, ngram, word):
@@ -71,7 +66,6 @@ class Corpus:
 			input_file.seek(0)
 		self.unique_words = list(Set(self.unique_words))
 		
-		# ovo predugo dela, treba nekaj drugo smisliti
 		# n_gram_after_word_count
 		for ngram in self.n_gram_counts:
 			n_set = Set()
