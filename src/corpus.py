@@ -40,7 +40,7 @@ class Corpus:
 		return
 	
 	def train(self, input_file, max_n, discount=0.75):
-		self.max_n = max_n + 1 # + 1 because I need (n+1)-grams
+		self.max_n = max_n + 1 # + 1 because witten-bell needs (n+1)-grams
 		
 		# n_gram_counts
 		for n in range(1, max_n+1):

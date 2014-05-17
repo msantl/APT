@@ -65,6 +65,11 @@ class SimpleEditor(Frame):
         Button(frm, text='Load',  command=self.onLoad).pack(side=LEFT)
         # quit button
         Quitter(frm).pack(side=LEFT)
+        # n dropdown
+        var = StringVar()
+        var.set("2")
+        self.n = 2
+        OptionMenu(frm, var, "2","3", command=self.get_n).pack()
         # input textbox
         self.inputText = ScrolledText(parent, binding=("<space>", self.predictNextWord),  file=file)
         self.inputText.pack(expand=YES, fill=BOTH)
@@ -88,17 +93,21 @@ class SimpleEditor(Frame):
     def onLoad(self):
         self.filename = askopenfile()
         self.wb = Witten_Bell()
-        self.wb.train(self.filename, 3)
+        self.wb.train(self.filename, self.n)
+    
+    def get_n(self, event):
+		self.n = event
 
     def predictNextWord(self, event):
         text = self.inputText.gettext()
         text = text.split()
 
-        if len(text) < 3:
+        if len(text) < self.n:
             return
 
         sequence = (str(text[-2]), str(text[-1]))
-        self.outputText.settext(self.wb.get_next_word(sequence))
+        self.outputText.settext(self.wb.get_next_word(sequence))       
+
 
 if __name__ == '__main__':
     try:
