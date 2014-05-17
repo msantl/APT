@@ -5,7 +5,8 @@ from tkFileDialog   import askopenfile
 
 from tkMessageBox import askokcancel
 
-from witten_bell import get_next_word_witten_bell
+from corpus import *
+from witten_bell import *
 
 class Quitter(Frame):
     def __init__(self, parent=None):
@@ -86,6 +87,12 @@ class SimpleEditor(Frame):
 
     def onLoad(self):
         self.filename = askopenfile()
+        wb = Witten_Bell()
+        wb.train(self.filename, 3)
+        wb.get_next_word(('Administration', 'of'))
+        #cor = Corpus()
+        #cor.train(self.filename, 3)
+        #cor.get_next_word(('Administration', 'of'))
 
     def predictNextWord(self, event):
         text = self.inputText.gettext()

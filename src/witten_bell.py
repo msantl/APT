@@ -1,85 +1,42 @@
 #!usr/bin/python
 
 from __future__ import division
-from sys import argv
-from n_gram_counter import *
+from corpus import *
 
-#inputPath = argv[1]
-#inputFile = open(inputPath, 'r')
-
-def n_plus_counter(sequence, inputFile):
-	result = []
-	sequence_length = len(sequence)
-	for line in inputFile:
-		line = line.strip()
-		words = line.split()
-		for i in range (0, len(words) - sequence_length):
-			ngram_list = []
-			for j in range(0, sequence_length):
-				ngram_list.append(words[i+j])
-			ngram_tuple = tuple(ngram_list)
-			if ngram_tuple == sequence:
-				result.append(words[i+sequence_length])
-	
-	inputFile.seek(0)
-	result = list(set(result))
-	return len(result)
-
-def witten_bell(inputFile, n, total_number_of_words, test_sequence, next_word):
-	whole_sequence = list(test_sequence)
-	whole_sequence.append(next_word)
-	whole_sequence = tuple(whole_sequence) 
-	
-	n_gram = count_n_grams(n, inputFile)
-	n_minus_one_gram = count_n_grams(n-1, inputFile)
-	
-	c_up = 0
-	if n_gram.has_key(whole_sequence):
-		c_up = n_gram[whole_sequence]
-	
-	
-	c_down = 0
-	if n_minus_one_gram.has_key(test_sequence):
-		c_down = n_minus_one_gram[test_sequence]
+class Witten_Bell(Corpus):
+	def get_word_probability(self, ngram, word):
+		whole_sequence = list(ngram)
+		whole_sequence.append(word)
+		whole_sequence = tuple(whole_sequence) 
 		
-	n_plus = n_plus_counter(test_sequence, inputFile)
-	
-	test_sequence = list(test_sequence)
-	test_sequence.pop(0)
-	test_sequence = tuple(test_sequence)
-	
-	if len(test_sequence) == 1:
-		uni_words = count_n_grams(1, inputFile)
-		if c_down+n_plus == 0:
-			return 0
-		p = (c_up + n_plus * uni_words[(next_word, )] / total_number_of_words) / (c_down + n_plus)
+		n_gram_counts = Corpus.get_ngrams_counts(self)
+		n_gram_after_word_count = Corpus.get_n_gram_after_word_count(self)
+		unique_words = Corpus.get_unique_words(self)
+		
+		c_up = 0
+		if n_gram_counts.has_key(whole_sequence):
+			c_up = n_gram_counts[whole_sequence]
+		
+		
+		c_down = 0
+		if n_gram_counts.has_key(ngram):
+			c_down = n_gram_counts[ngram]
+		
+		n_plus = 0
+		if n_gram_after_word_count.has_key(ngram):
+			n_plus = n_gram_after_word_count[ngram]
+		
+		ngram = list(ngram)
+		ngram.pop(0)
+		ngram = tuple(ngram)
+		
+		if len(ngram) == 1:
+			if c_down+n_plus == 0:
+				return 0
+			p = (c_up + n_plus * n_gram_counts[(word, )] / Corpus.get_total_number_of_words(self)) / (c_down + n_plus)
+			return p
+			
+		p = (c_up + n_plus * get_word_probability(self, ngram, word)) / (c_down + n_plus)
+		
 		return p
-		
-	p = (c_up + n_plus * witten_bell(inputFile, n-1, total_number_of_words, test_sequence, next_word)) / (c_down + n_plus)
-	
-	return p
 
-
-def get_next_word_witten_bell(inputFile, sequence):
-	n = 3
-	test_sequence = sequence
-
-	unique_words = count_n_grams(1, inputFile)
-
-	total_number_of_words = 0
-	for key in unique_words:
-		total_number_of_words += unique_words[key]
-
-	probabilities = []
-	for word, number in unique_words.iteritems():
-		prob = witten_bell(inputFile, 3, total_number_of_words, test_sequence, word[0])
-		probabilities.append((word[0], prob))
-
-	max_prob = probabilities[0][1]
-	predicted_word = probabilities[0][0]
-	for i in probabilities:
-		if i[1] > max_prob:
-			max_prob = i[1]
-			predicted_word = i[0]
-		
-	return predicted_word
