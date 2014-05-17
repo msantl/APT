@@ -70,6 +70,11 @@ class SimpleEditor(Frame):
         var.set("2")
         self.n = 2
         OptionMenu(frm, var, "2","3", command=self.get_n).pack()
+        # n dropdown
+        var = StringVar()
+        var.set("Witten-Bell")
+        self.procedure = "Witten-Bell"
+        OptionMenu(frm, var, "Witten-Bell","Kneser-Nay", command=self.get_procedure).pack()
         # input textbox
         self.inputText = ScrolledText(parent, binding=("<space>", self.predictNextWord),  file=file)
         self.inputText.pack(expand=YES, fill=BOTH)
@@ -92,11 +97,17 @@ class SimpleEditor(Frame):
 
     def onLoad(self):
         self.filename = askopenfile()
-        self.wb = Witten_Bell()
-        self.wb.train(self.filename, self.n)
+        if self.procedure == "Witten-Bell":
+			self.proc = Witten_Bell()
+        else:
+			pass
+        self.proc.train(self.filename, self.n)
     
+    def get_procedure(self, event):
+		self.procedure = event
+
     def get_n(self, event):
-		self.n = event
+		self.n = int(event)
 
     def predictNextWord(self, event):
         text = self.inputText.gettext()
@@ -106,7 +117,8 @@ class SimpleEditor(Frame):
             return
 
         sequence = (str(text[-2]), str(text[-1]))
-        self.outputText.settext(self.wb.get_next_word(sequence))       
+        self.outputText.settext(self.proc.get_next_word(sequence))      
+
 
 
 if __name__ == '__main__':
