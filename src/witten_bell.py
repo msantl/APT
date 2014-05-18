@@ -4,39 +4,21 @@ from __future__ import division
 from corpus import *
 
 class Witten_Bell(Corpus):
-	def get_word_probability(self, ngram, word):
-		whole_sequence = list(ngram)
-		whole_sequence.append(word)
-		whole_sequence = tuple(whole_sequence) 
-		
-		n_gram_counts = Corpus.get_ngrams_counts(self)
-		n_gram_after_word_count = Corpus.get_n_gram_after_word_count(self)
-		unique_words = Corpus.get_unique_words(self)
-		
-		c_up = 0
-		if n_gram_counts.has_key(whole_sequence):
-			c_up = n_gram_counts[whole_sequence]
-		
-		
-		c_down = 0
-		if n_gram_counts.has_key(ngram):
-			c_down = n_gram_counts[ngram]
-		
-		n_plus = 0
-		if n_gram_after_word_count.has_key(ngram):
-			n_plus = n_gram_after_word_count[ngram]
-		
-		ngram = list(ngram)
-		ngram.pop(0)
-		ngram = tuple(ngram)
-		
-		if len(ngram) == 1:
-			if c_down+n_plus == 0:
-				return 0
-			p = (c_up + n_plus * n_gram_counts[(word, )] / Corpus.get_total_number_of_words(self)) / (c_down + n_plus)
-			return p
-			
-		p = (c_up + n_plus * get_word_probability(self, ngram, word)) / (c_down + n_plus)
-		
-		return p
+    def get_word_probability(self, ngram, word):
+        n = len(ngram) + 1
+
+        c_up = self.get_ngram_count(n, ngram, word)
+
+        c_down = self.get_ngram_count(n - 1, ngram[1:], word)
+
+        n_plus = self.get_prefix_count(n, ngram)
+
+        if c_down + n_plus == 0:
+            p = self.DEFAULT_PROB
+        elif len(ngram) == 1:
+            p = (c_up + n_plus * self.get_ngram_count(1, (), word) / self.get_total_number_of_words()) / (c_down + n_plus)
+        else:
+            p = (c_up + n_plus * self.get_word_probability(ngram[1:], word)) / (c_down + n_plus)
+
+        return p
 

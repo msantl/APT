@@ -5,8 +5,11 @@ from tkFileDialog   import askopenfile
 
 from tkMessageBox import askokcancel
 
+import unicodedata
+
 from corpus import *
 from witten_bell import *
+from kneser_ney import *
 
 class Quitter(Frame):
     def __init__(self, parent=None):
@@ -53,6 +56,13 @@ class ScrolledText(Frame):
         return self.text.get('1.0', END+'-1c')
 
 class SimpleEditor(Frame):
+    # maximum NGRAM in language model
+    MAX_N = 4
+    DEFAULT_N = 2
+
+    BOS = "<s>"
+    EOS = "</s>"
+
     def __init__(self, parent=None, file=None):
         Frame.__init__(self, parent)
 
@@ -65,16 +75,16 @@ class SimpleEditor(Frame):
         Button(frm, text='Load',  command=self.onLoad).pack(side=LEFT)
         # quit button
         Quitter(frm).pack(side=LEFT)
+        # reload button
+        Button(frm, text='Reload',  command=self.reload_config).pack(side=RIGHT)
         # n dropdown
         var = StringVar()
-        var.set("2")
-        self.n = 2
-        OptionMenu(frm, var, "2","3", command=self.get_n).pack()
+        var.set(self.DEFAULT_N)
+        OptionMenu(frm, var, "2", "3", command=self.get_n).pack()
         # n dropdown
         var = StringVar()
         var.set("Witten-Bell")
-        self.procedure = "Witten-Bell"
-        OptionMenu(frm, var, "Witten-Bell","Kneser-Nay", command=self.get_procedure).pack()
+        OptionMenu(frm, var, "Witten-Bell","Kneser-Ney", command=self.get_procedure).pack()
         # input textbox
         self.inputText = ScrolledText(parent, binding=("<space>", self.predictNextWord),  file=file)
         self.inputText.pack(expand=YES, fill=BOTH)
@@ -89,6 +99,18 @@ class SimpleEditor(Frame):
         # set focus on inputText
         self.inputText.text.focus()
 
+        # default
+        self.proc = Witten_Bell(self.MAX_N)
+        self.n = self.DEFAULT_N
+        self.filename = None
+
+    def reload_config(self):
+        self.outputText.settext("")
+        self.inputText.settext("")
+
+        if self.filename:
+            self.proc.train(self.filename)
+
     def onSave(self):
         filename = asksaveasfilename()
         if filename:
@@ -97,29 +119,30 @@ class SimpleEditor(Frame):
 
     def onLoad(self):
         self.filename = askopenfile()
-        if self.procedure == "Witten-Bell":
-			self.proc = Witten_Bell()
-        else:
-			pass
-        self.proc.train(self.filename, self.n)
-    
+        self.proc.train(self.filename)
+
     def get_procedure(self, event):
-		self.procedure = event
+        if event == "Witten-Bell":
+            self.proc = Witten_Bell(self.MAX_N)
+        else:
+            self.proc = KneserNey(self.MAX_N)
 
     def get_n(self, event):
 		self.n = int(event)
 
     def predictNextWord(self, event):
+        # how many words are we taking
+        n = self.n - 1
+
         text = self.inputText.gettext()
-        text = text.split()
+        # make sure we alwyas have at least n words
+        text = [self.BOS] * n + text.split()
 
-        if len(text) < self.n:
-            return
+        # extract the last ngram
+        sequence = tuple(text[-n:])
 
-        sequence = (str(text[-2]), str(text[-1]))
-        self.outputText.settext(self.proc.get_next_word(sequence))      
-
-
+        # predict the next word
+        self.outputText.settext(sequence + (self.proc.get_next_word(sequence), ))
 
 if __name__ == '__main__':
     try:
