@@ -38,7 +38,7 @@ class Corpus:
     def get_prefix_count(self, n, ngram):
         return sum(self.n_gram_word_count_map[n][ngram].values())
 
-    def get_next_word(self, ngram):
+    def get_next_word(self, ngram, current_word=None):
         probabilities = []
         words = self.get_unique_words()
 
@@ -48,12 +48,18 @@ class Corpus:
             prob = self.get_word_probability(ngram, word)
             probabilities.append((word, prob))
 
-        max_prob = probabilities[0][1]
-        predicted_word = probabilities[0][0]
+        max_prob = 0
+        predicted_word = "<Can't find a word>"
         for i in probabilities:
             if i[1] > max_prob:
-                max_prob = i[1]
-                predicted_word = i[0]
+                if current_word:
+                    current_word_length = len(current_word)
+                    if current_word == i[0][:current_word_length]:
+                        max_prob = i[1]
+                        predicted_word = i[0]
+                else:
+                    max_prob = i[1]
+                    predicted_word = i[0]
 
         return predicted_word
 
