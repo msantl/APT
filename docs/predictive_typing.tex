@@ -63,7 +63,7 @@
 %----------------------------------------------------------------------------------------
 
 \begin{abstract}
-In this paper we survey two algorithms for smoothing models for language n-gram modeling, Witten-Bell and Kneser-Ney. We implemented simple text editor which uses this methods and then we investigate how factors such as training data size, training corpus, and n-gram order affect to the finally results of this methods which is measured through TODO. We find that these factors can significantly affect the performance of models, especially training data size. TODO Results are showing ...
+In this paper we survey two algorithms for smoothing models for language n-gram modeling, Witten-Bell and Kneser-Ney. We implemented simple text editor which uses this methods and then we investigate how factors such as training data size, training corpus, and n-gram order affect to the finally results of this methods which is measured through cross-entropy and perplexity. We find that these factors can significantly affect the performance of models, especially training data size. TODO Results are showing ...
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -82,6 +82,8 @@ where the $ c(\omega_{i-2}\omega_{i-1}\omega_i) $ is the number of times the wor
 
 In this work, we implemented simple text editor with predictive typing which uses Witten-Bell or Kneser-Ney smoothing technique to predict next word with possibility of choosing which n-gram will be used in this process.  
 
+\section{Previous work}
+
 \section{Methods}
 
 In this section, we survey two smoothing algorithms for n-gram models, Witten-Bell smoothing and Kneser-Ney smoothing. 
@@ -89,11 +91,22 @@ In this section, we survey two smoothing algorithms for n-gram models, Witten-Be
 The first smoothing algorithm we\rq{}re going to describe is the Witten-Bell smoothing algorithm. Witten-Bell smoothing algorithm is a very simple technique that performs rather poorly \cite{1_chen1999empirical}. Next, we describe the Kneser-Ney smoothing algorithm. Kneser-Ney smoothing works very well and it outperforms Witten-Bell smoothing algorithm.
 
 \subsection{Witten-Bell smoothing}
-Witten-Bell smoothing was developed for the task of text compression. The nth-order smoothed model is defined recursively as a linear interpolation between the nrh-order maximum likelihood and the (n-1)th-order smoothed model. The probability of the next word is calculated as
-
+Witten-Bell smoothing was developed for the task of text compression. The nth-order smoothed model is defined recursively as a linear interpolation between the nth-order maximum likelihood and the (n-1)th-order smoothed model. 
 \begin{equation}
-p_{WB}(\omega_i|\omega_{i-n+1}^{i-1})=\frac{c(\omega_{i-n+1}^{i}) + N_{1+}(\omega_{i-1}^{i-n+1}\cdot)p{WB}(\omega_i|\omega_{i-n+2}^{i-1})}{\sum_{wi}c(\omega_{i-n+1}^{i}) + N_{1+}(\omega_{i-1}^{i-n+1}\cdot)}
+N_{1+}(w_{i-n+1}^{i-1}\cdot) = |{w_{i} : c(w_{i-n+1}^{i-1}w_{i}) > 0}|
 \end{equation}
+is the number of unique words that follow the history $ \omega_{i-n+1}^{i-1} $.
+The notation $N_{1+}$ is meant to evoke the number of words that have one or more counts.
+This is used to determine the parameters $ \lambda_{\omega_{i-n+1}^{i-1}} $  for Witten-Bell smoothing:
+\begin{equation}
+1-\lambda_{\omega_{i-n+1}^{i-1}}=\frac{N_{1+}(w_{i-n+1}^{i-1}\cdot)}{N_{1+}(w_{i-n+1}^{i-1}\cdot) + \sum_{wi}c(\omega_{i-n+1}^{i})}
+\end{equation}
+which leads to the expression to calculate the probability of the next word 
+
+\begin{multline}
+p_{WB}(\omega_i|\omega_{i-n+1}^{i-1})= \\ \frac{c(\omega_{i-n+1}^{i}) + N_{1+}(\omega_{i-1}^{i-n+1}\cdot)p{WB}(\omega_i|\omega_{i-n+2}^{i-1})}{\sum_{wi}c(\omega_{i-n+1}^{i}) + N_{1+}(\omega_{i-1}^{i-n+1}\cdot)}
+\end{multline}
+The factor $ 1-\lambda_{\omega_{i-n+1}^{i-1}} $ can be interpreted as the frequency with which we should use the lower-order model to predict the next word. We should only use the lower-order model when there are no counts for the given n-gram in the higher-order model (i.e. when we see a novel word for the history). Expression $ N_{1+}(w_{i-n+1}^{i-1}\cdot) $ can be viewed as number of novel words we have seen after the history $ \omega_{i-n+1}^{i-1} $ over the training set, and this is in fact the count assigned by Witten-Bell smoothing to the lower-order distribution.
 
 \subsection{Kneser-Ney smoothing}
 Kneser-Ney smoothing algorithm was introduced in 1995. as an extension of absolute discounting where the lower-order distributions that one combines with a higher-order distribution is built in a novel manner \cite{1_chen1999empirical}. 
@@ -162,7 +175,7 @@ The cross-entropy $H_{p}(T)$ of a model $p(t_{k})$ on corpus $T$ is:
 H_{p}(T) = - \frac{1}{W_{T}} \log_{2} p(T)
 \end{equation}
 
-where $W_{T}$ is the length of the corpus T measured in words. This value can be interpreted as the average number of bits needed to encode each of the $W_{T}$ words in the test corpus using the compresion algorithm associated with model $p(t_{k})$.
+where $W_{T}$ is the length of the corpus T measured in words. This value can be interpreted as the average number of bits needed to encode each of the $W_{T}$ words in the test corpus using the compression algorithm associated with model $p(t_{k})$.
 
 The perplexity $PP_{p}(T)$ of a model $p$ is the reciprocal of the (geometric) average probability assigned by the model to each word in the test corpus $T$, and is related to cross-entropy with the following equation:
 \begin{equation}
@@ -174,7 +187,8 @@ Lower cross-entropies and perplexities are better.
 % TODO ubaci rezultate
 
 \section{Conclusion}
-TODO U 2... u Introduction ima zakaj je predictin typing dobar, a zakaj ne
+Text prediction enables text entry under difficult conditions which is great for disabled users who have an opportunity to generate more text with fewer actions. There are two objections to predictive typing systems. The first is that computers will always have a limited ability to predict and the second is that people will gradually forget how to write text correctly.
+Smoothing is a fundamental technique for statistical modeling, important not only for language modeling but for many other applications as well. Whenever data sparsity is an issue, which is almost always in statistical modeling, smoothing can help performance.
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
