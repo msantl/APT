@@ -2,6 +2,8 @@
 
 \usepackage{lipsum} % Package to generate dummy text throughout this template
 \usepackage{amsmath}
+\usepackage{graphicx}
+
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[utf8]{inputenc}
@@ -141,6 +143,11 @@ p_{KN}(w_{i} | w_{i-n+2}^{i-1}) = \frac{N_{1+}(\cdot w_{i-n+2}^{i})}{\sum_{w_{i}
 \end{equation}
 
 \section{Results}
+Implemented language models with Witten-Bell and Kneser-Ney smoothing algorithms were evaluated using measures of perplexity and cross-entropy on separete fractions of the test corpus. Finally, a \nameref{image:editor} with the predicting capabilities was developed.
+
+\subsection{Evaluation}
+
+\subsection{Text editor}
 
 \section{Discussion}
 
@@ -158,5 +165,14 @@ TODO U 2... u Introduction ima zakaj je predictin typing dobar, a zakaj ne
 %----------------------------------------------------------------------------------------
 
 \end{multicols}
+
+\appendix
+\section{Text Editor}
+
+\begin{figure}[hT!]
+        \label{image:editor}
+        \includegraphics[width=\textwidth]{editor.png}
+        \caption{Text editor}
+\end{figure}
 
 \end{document}
