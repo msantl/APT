@@ -1,6 +1,5 @@
 \documentclass[twoside]{article}
 
-\usepackage{lipsum} % Package to generate dummy text throughout this template
 \usepackage{amsmath}
 \usepackage{graphicx}
 
@@ -64,7 +63,7 @@
 %----------------------------------------------------------------------------------------
 
 \begin{abstract}
-In this paper we survey two algorithms for smoothing models for language n-gram modeling, Witten Bell and Kneser Ney. We implemented simple text editor which uses this methods and then we investigate how factors such as training data size, training corpus, and n-gram order affect to the finally results of this methods which is measured through TODO. We find that these factors can significantly affect the performance of models, especially training data size. TODO Results are showing ...
+In this paper we survey two algorithms for smoothing models for language n-gram modeling, Witten-Bell and Kneser-Ney. We implemented simple text editor which uses this methods and then we investigate how factors such as training data size, training corpus, and n-gram order affect to the finally results of this methods which is measured through TODO. We find that these factors can significantly affect the performance of models, especially training data size. TODO Results are showing ...
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -79,27 +78,34 @@ Language models provide text entry system with the power to predict unseen text 
 \begin{equation}
 p(\omega_i|\omega_{i-2}\omega_{i-1}) = \frac{c(\omega_{i-2}\omega_{i-1}\omega_i)}{c(\omega_{i-2}\omega_{i-1})}
 \end{equation}
-where the $ c(\omega_{i-2}\omega_{i-1}\omega_i) $ is the number of times the word sequence $ \omega_{i-2}\omega_{i-1}\omega_i $ occurs in some corpus of training data and $ c(\omega_{i-2}\omega_{i-1}) $ is the number of times word sequence $ \omega_{i-2}\omega_{i-1} $ occurs. This probability is called the maximum likelihood estimate. Maximum likelihood estimate can lead to poor performance in many applications of language models, for example, if the correct transcription of the uterence  
+where the $ c(\omega_{i-2}\omega_{i-1}\omega_i) $ is the number of times the word sequence $ \omega_{i-2}\omega_{i-1}\omega_i $ occurs in some corpus of training data and $ c(\omega_{i-2}\omega_{i-1}) $ is the number of times word sequence $ \omega_{i-2}\omega_{i-1} $ occurs. This probability is called the maximum likelihood estimate. Maximum likelihood estimate can lead to poor performance in many applications of language models, for example, if the correct transcription of an utterance contains a trigram that has never occur in the training data, we will have $ p_{ML}(\omega_i|\omega_{i-2}\omega_{i-1})=0 $ which will cause the wrong prediction. To address this problem a technique called smoothing was used. The term smoothing describes techniques for adjusting maximum likelihood estimate of probabilities to produce more accurate probabilities. 
+
+In this work, we implemented simple text editor with predictive typing which uses Witten-Bell or Kneser-Ney smoothing technique to predict next word with possibility of choosing which n-gram will be used in this process.  
 
 \section{Methods}
 
 In this section, we survey two smoothing algorithms for n-gram models, Witten-Bell smoothing and Kneser-Ney smoothing. 
 
-The first smoohting algorithm we\rq{}re going to describe is the Witten-Bell smoothing algorithm. Witten-Bell smoothing algorithm is a very simple technique that performs rather poorly \cite{1_chen1999empirical}. Next, we describe the Kneser-Ney smoothing algorithm. Kneser-Ney smoothing works very well and it outperforms Witten-Bell smoothing algorithm.
+The first smoothing algorithm we\rq{}re going to describe is the Witten-Bell smoothing algorithm. Witten-Bell smoothing algorithm is a very simple technique that performs rather poorly \cite{1_chen1999empirical}. Next, we describe the Kneser-Ney smoothing algorithm. Kneser-Ney smoothing works very well and it outperforms Witten-Bell smoothing algorithm.
 
 \subsection{Witten-Bell smoothing}
+Witten-Bell smoothing was developed for the task of text compression. The nth-order smoothed model is defined recursively as a linear interpolation between the nrh-order maximum likelihood and the (n-1)th-order smoothed model. The probability of the next word is calculated as
+
+\begin{equation}
+p_{WB}(\omega_i|\omega_{i-n+1}^{i-1})=\frac{c(\omega_{i-n+1}^{i}) + N_{1+}(\omega_{i-1}^{i-n+1}\cdot)p{WB}(\omega_i|\omega_{i-n+2}^{i-1})}{\sum_{wi}c(\omega_{i-n+1}^{i}) + N_{1+}(\omega_{i-1}^{i-n+1}\cdot)}
+\end{equation}
 
 \subsection{Kneser-Ney smoothing}
-Kneser-Ney smoothing algorithm was introduced in 1995. as an extenstion of absolute discounting where the lower-order distributions that one combines with a higher-order distribution is built in a novel manner \cite{1_chen1999empirical}. 
+Kneser-Ney smoothing algorithm was introduced in 1995. as an extension of absolute discounting where the lower-order distributions that one combines with a higher-order distribution is built in a novel manner \cite{1_chen1999empirical}. 
 
-Next we\rq{}ll present the mathematicall background of the Kneser-Ney smoothing algorithm.
+Next we\rq{}ll present the mathematical background of the Kneser-Ney smoothing algorithm.
 
 Considering bigram models, we would like to select a smoothed distribution $p_{KN}$ that satisfies the following constraint on unigram marginals for all $w_i$:
 
 \begin{equation}
 \sum_{w_{i - 1}} p_{KN}(w_{i-1}w_{i} ) = \frac{c(w_{i})}{\sum_{w{i}} c(w_{i})}
 \end{equation}
-where the funcion $c(w_{i})$ denotes the count of the word $w_{i}$ in the given corpus. The left hand-side of this equation is the unigram marignal for $w_{i}$ of the smoothed bigram distribution $p_{KN}$, and the right-hand side is the unigram frequency of $w_{i}$ found in the given corpus.
+where the function $c(w_{i})$ denotes the count of the word $w_{i}$ in the given corpus. The left hand-side of this equation is the unigram marginal for $w_{i}$ of the smoothed bigram distribution $p_{KN}$, and the right-hand side is the unigram frequency of $w_{i}$ found in the given corpus.
 
 As in absolute discounting where $0 \le D \le 1$, we assume that the model has the following form:
 
@@ -113,7 +119,7 @@ N_{1+}(\cdot w_{i}) = |{w_{i} : c(w_{i-1}w_{i}) > 0}|
 
 is the number of different words $w_{i-1}$ that precede $w_{i}$ in the given corpus.
 
-We used this formulation, because as stated in \cite{1_chen1999empirical}, it leads to a cleaner derication of essentially the same formula; no approximations are required, unlike in the original derivation.
+We used this formulation, because as stated in \cite{1_chen1999empirical}, it leads to a cleaner derivation of essentially the same formula; no approximations are required, unlike in the original derivation.
 
 By applying the law of total probability, we can write equations given above as following:
 \begin{equation}
