@@ -1,6 +1,7 @@
 \documentclass[twoside]{article}
 
 \usepackage{lipsum} % Package to generate dummy text throughout this template
+\usepackage{amsmath}
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[utf8]{inputenc}
@@ -24,9 +25,9 @@
 
 \usepackage{titlesec} % Allows customization of titles
 \renewcommand\thesection{\Roman{section}} % Roman numerals for the sections
-\renewcommand\thesubsection{\Roman{subsection}} % Roman numerals for subsections
+\renewcommand\thesubsection{\arabic{subsection}} % Roman numerals for subsections
 \titleformat{\section}[block]{\large\scshape\centering}{\thesection.}{1em}{} % Change the look of the section titles
-\titleformat{\subsection}[block]{\large}{\thesubsection.}{1em}{} % Change the look of the section titles
+\titleformat{\subsection}[block]{\large\scshape\centering}{\thesubsection.}{1em}{} % Change the look of the section titles
 
 \usepackage{fancyhdr} % Headers and footers
 \pagestyle{fancy} % All pages have headers and footers
@@ -74,6 +75,64 @@
 
 \section{Methods}
 
+In this section, we survey two smoothing algorithms for n-gram models, Witten-Bell smoothing and Kneser-Ney smoothing. 
+
+The first smoohting algorithm we\rq{}re going to describe is the Witten-Bell smoothing algorithm. Witten-Bell smoothing algorithm is a very simple technique that performs rather poorly \cite{chen1999empirical}. Next, we describe the Kneser-Ney smoothing algorithm. Kneser-Ney smoothing works very well and it outperforms Witten-Bell smoothing algorithm.
+
+\subsection{Witten-Bell smoothing}
+
+\subsection{Kneser-Ney smoothing}
+Kneser-Ney smoothing algorithm was introduced in 1995. as an extenstion of absolute discounting where the lower-order distributions that one combines with a higher-order distribution is built in a novel manner \cite{1_chen1999empirical}. 
+
+Next we\rq{}ll present the mathematicall background of the Kneser-Ney smoothing algorithm.
+
+Considering bigram models, we would like to select a smoothed distribution $p_{KN}$ that satisfies the following constraint on unigram marginals for all $w_i$:
+
+\begin{equation}
+\sum_{w_{i - 1}} p_{KN}(w_{i-1}w_{i} ) = \frac{c(w_{i})}{\sum_{w{i}} c(w_{i})}
+\end{equation}
+where the funcion $c(w_{i})$ denotes the count of the word $w_{i}$ in the given corpus. The left hand-side of this equation is the unigram marignal for $w_{i}$ of the smoothed bigram distribution $p_{KN}$, and the right-hand side is the unigram frequency of $w_{i}$ found in the given corpus.
+
+As in absolute discounting where $0 \le D \le 1$, we assume that the model has the following form:
+
+\begin{multline}
+p_{KN}(w_{i} | w_{i-n+1}^{i-1}) = \frac{max(c(w_{i-n+1}^{i}) - D, 0)}{\sum_{w_{i}} c(w_{i-n+1}^{i})}  \\ + \frac{D}{\sum_{w_{i}} c(w_{i-n+1}^{i})} N_{1+}(w_{i-n+1}^{i-1} \cdot) p_{KN}(w_{i} | w_{i-n+2}^{i-1}) 
+\end{multline}
+where 
+\begin{equation}
+N_{1+}(\cdot w_{i}) = |{w_{i} : c(w_{i-1}w_{i}) > 0}|
+\end{equation}
+
+is the number of different words $w_{i-1}$ that precede $w_{i}$ in the given corpus.
+
+We used this formulation, because as stated in \cite{1_chen1999empirical}, it leads to a cleaner derication of essentially the same formula; no approximations are required, unlike in the original derivation.
+
+By applying the law of total probability, we can write equations given above as following:
+\begin{equation}
+p_{KN}(w_{i-1}w_{i} ) = \sum_{w_{i-1}} p_{KN}(w_{i} | w_{i-1} )p(w_{i-1})
+\end{equation}
+which leads to:
+
+\begin{equation}
+\frac{c(w_{i})}{\sum_{w{i}} c(w_{i})} = \sum_{w_{i-1}} p_{KN}(w_{i} | w_{i-1} )p(w_{i-1})
+\end{equation}
+
+Taking into account that $p(w_{i-1}) =\frac{c(w_{i-1})}{\sum_{w{i-1}} c(w_{i-1})} $, we have
+\begin{equation}
+c(w_{i}) = \sum_{w_{i-1}} c(w_{i-1}) p_{KN}(w_{i} | w_{i-1})
+\end{equation}
+
+which, after substituting and simplifying leads to the following form:
+
+\begin{equation}
+c(w_{i}) = c(w_{i}) - N_{1+}(\cdot w_{i}) + D p_{KN}(w_{i}) \sum_{w_{i}} N_{1+}(\cdot w_{i})
+\end{equation}
+
+Generalizing to higher-order models, we have the final form for the word probability:
+
+\begin{equation}
+p_{KN}(w_{i} | w_{i-n+2}^{i-1}) = \frac{N_{1+}(\cdot w_{i-n+2}^{i})}{\sum_{w_{i}}N_{1+}(\cdot w_{i-n+2}^{i})} 
+\end{equation}
 
 \section{Results}
 
