@@ -144,13 +144,6 @@ class SimpleEditor(Frame):
         # predict the next word
         self.outputText.settext(sequence + (self.proc.get_next_word(sequence), ))
 
-        # if pressed key a-z execute
-        # self.outputText.settext(sequence + (self.proc.get_next_word(sequence), text[-1:]))
-        # instead of the line above
-        # and the sequence is ->
-        # sequence = text[-(n+1):]
-        # sequence = tuple(sequence[n:])
-
 if __name__ == '__main__':
     try:
         master = Tk()
