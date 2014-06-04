@@ -85,7 +85,7 @@ where the $ c(\omega_{i-2}\omega_{i-1}\omega_i) $ is the number of times the wor
 
 In this section, we survey two smoothing algorithms for n-gram models, Witten-Bell smoothing and Kneser-Ney smoothing. 
 
-The first smoohting algorithm we\rq{}re going to describe is the Witten-Bell smoothing algorithm. Witten-Bell smoothing algorithm is a very simple technique that performs rather poorly \cite{chen1999empirical}. Next, we describe the Kneser-Ney smoothing algorithm. Kneser-Ney smoothing works very well and it outperforms Witten-Bell smoothing algorithm.
+The first smoohting algorithm we\rq{}re going to describe is the Witten-Bell smoothing algorithm. Witten-Bell smoothing algorithm is a very simple technique that performs rather poorly \cite{1_chen1999empirical}. Next, we describe the Kneser-Ney smoothing algorithm. Kneser-Ney smoothing works very well and it outperforms Witten-Bell smoothing algorithm.
 
 \subsection{Witten-Bell smoothing}
 
@@ -145,11 +145,27 @@ p_{KN}(w_{i} | w_{i-n+2}^{i-1}) = \frac{N_{1+}(\cdot w_{i-n+2}^{i})}{\sum_{w_{i}
 \section{Results}
 Implemented language models with Witten-Bell and Kneser-Ney smoothing algorithms were evaluated using measures of perplexity and cross-entropy on separete fractions of the test corpus. Finally, a \nameref{image:editor} with the predicting capabilities was developed.
 
-\subsection{Evaluation}
 
-\subsection{Text editor}
+The most common metric for evaluating a language model is the probability that the model assigns to test data, or the derivate measures of \textit{cross-entropy} and \textit{perplexity} \cite{1_chen1999empirical}. For a test corpus \textit{T} composed of the sentences $(t1, t2 , ... t_{l_{T}})$ we can calculate the probability of the test corpus $p(T)$ as the product of the probabilities of all sentences in the corpus:
+\begin{equation}
+p(T) = \prod_{k=1}^{l_{T}} p(t_{k})
+\end{equation}
 
-\section{Discussion}
+The cross-entropy $H_{p}(T)$ of a model $p(t_{k})$ on corpus $T$ is:
+\begin{equation}
+H_{p}(T) = - \frac{1}{W_{T}} \log_{2} p(T)
+\end{equation}
+
+where $W_{T}$ is the length of the corpus T measured in words. This value can be interpreted as the average number of bits needed to encode each of the $W_{T}$ words in the test corpus using the compresion algorithm associated with model $p(t_{k})$.
+
+The perplexity $PP_{p}(T)$ of a model $p$ is the reciprocal of the (geometric) average probability assigned by the model to each word in the test corpus $T$, and is related to cross-entropy with the following equation:
+\begin{equation}
+PP_{p} (T) = 2^{H_{p}(T)}
+\end{equation}
+
+Lower cross-entropies and perplexities are better.
+
+% TODO ubaci rezultate
 
 \section{Conclusion}
 TODO U 2... u Introduction ima zakaj je predictin typing dobar, a zakaj ne
