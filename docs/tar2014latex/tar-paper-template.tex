@@ -146,9 +146,75 @@ PP_{p} (T) = 2^{H_{p}(T)}
 
 Lower cross-entropies and perplexities are better.
 
-% TODO ubaci rezultate
+We have created three test corpuses to evaluate implemented smoothing algorithms. The main difference between them is the size. Test corpus \textit{large.txt} has $1,000$ sentences, \textit{medium.txt} has $500$ sentences and \textit{small.txt} has $50$ sentences. Smoothing algorithms were trained and evaluated on separate fractions of the corpus. The size of the evaluation set was $5\%$ of the train set. 
+
+\begin{table}[h]
+\caption{Entropy and perplexity for \textit{small.txt} corpus}
+\label{tab:small}
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Method & n & Probability & Entropy & Perplexity \\
+\midrule
+Kneser-Ney & 2 & $4.115 \cdot 10^{-11}$ & $0.685$ & $1.608$ \\
+Witten-Bell & 2 & $3.662 \cdot 10^{-14}$ & $0.743$ & $1.675$ \\
+
+Kneser-Ney & 3 & $6.181 \cdot 10^{-12}$ & $0.621$ & $1.537$ \\
+Witten-Bell & 3 & $1.0$ & $0.0$ & $1.0$ \\
+
+Kneser-Ney & 4 & $4.955 \cdot 10^{-9}$ & $0.459$ & $1.375$ \\
+Witten-Bell & 4 & $1.0$ & $0.0$ & $1.0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{Entropy and perplexity for \textit{medium.txt} corpus}
+\label{tab:medium}
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Method & n & Probability & Entropy & Perplexity \\
+\midrule
+Kneser-Ney & 2 & $1.489 \cdot 10^{-70}$ & $0.102$ & $1.073$ \\
+Witten-Bell & 2 & $8.639 \cdot 10^{-78}$ & $0.112$ & $1.081$ \\
+
+Kneser-Ney & 3 & $3.727 \cdot 10^{-63}$ & $0.091$ & $1.065$ \\
+Witten-Bell & 3 & $0.039$ & $0.002$ & $1.001$ \\
+
+Kneser-Ney & 4 & $4.663 \cdot 10^{-58}$ & $0.083$ & $1.059$ \\
+Witten-Bell & 4 & $0.307$ & $7.496 \cdot 10^{-3}$ & $1.0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{table}[h]
+\caption{Entropy and perplexity for \textit{large.txt} corpus}
+\label{tab:large}
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Method & n & Probability & Entropy & Perplexity \\
+\midrule
+Kneser-Ney & 2 & $5.345 \cdot 10^{-174}$ & $0.317$ & $1.246$ \\
+Witten-Bell & 2 & $3.712 \cdot 10^{-190}$ & $0.347$ & $1.272$ \\
+
+Kneser-Ney & 3 & $3.142 \cdot 10^{-110}$ & $0.201$ & $1.1.149$ \\
+Witten-Bell & 3 & $7.834 \cdot 10^{-46}$ & $0.083$ & $1.059$ \\
+
+Kneser-Ney & 4 & $5.874 \cdot 10^{-114}$ & $0.207$ & $1.155$ \\
+Witten-Bell & 4 & $1.763 \cdot 10^{-11}$ & $0.019$ & $1.014$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 \section{Conclusion}
+
+If we take a closer look to the results, we can see that implemented smoothing algorithms perform better when they have more context in prediction (size of the \textit{ngram}, $n$). However, the problem that we\rq{}ve enecountered while evaluationg smoothing algorithms was the low probability causing problems while calculating entropt and perplexity. Because of that and big run time complexity, the corpus size does not exceed $1,000$.
 
 Text prediction enables text entry under difficult conditions which is great for disabled users who have an opportunity to generate more text with fewer actions. There are two objections to predictive typing systems. The first is that computers will always have a limited ability to predict and the second is that people will gradually forget how to write text correctly.
 
