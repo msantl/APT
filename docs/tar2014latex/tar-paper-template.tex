@@ -189,7 +189,7 @@ Witten-Bell & 4 & $0.307$ & $7.496 \cdot 10^{-3}$ & $1.0$ \\
 \end{table}
 
 
-\begin{table}[h]
+\begin{table}[htb!]
 \caption{Entropy and perplexity for \textit{large.txt} corpus}
 \label{tab:large}
 \begin{center}
@@ -210,7 +210,7 @@ Witten-Bell & 4 & $1.763 \cdot 10^{-11}$ & $0.019$ & $1.014$ \\
 \end{center}
 \end{table}
 
-
+\newpage
 
 \section{Conclusion}
 
@@ -220,8 +220,9 @@ Text prediction enables text entry under difficult conditions, which is great fo
 
 Smoothing is a fundamental technique for statistical modeling, important not only for language modeling, but for many other applications as well. Whenever data sparsity is an issue, which is almost always in statistical modeling, smoothing can help increase performance.
 
-\bibliography{tar2014}{} 
+\bibliographystyle{tar2014}
 \nocite{*}
-\bibliographystyle{fer}
+\bibliography{tar2014} 
 
 \end{document}
+
